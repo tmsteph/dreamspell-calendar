@@ -71,7 +71,8 @@
   </style>
 </head>
 <body>
-  <h1>✡ tmsteph's 13-Moon Calendar ✡</h1>
+  <h1>✴ tmsteph's 13-Moon Calendar ✴</h1>
+  <div id="todayDisplay" style="text-align:center; font-size: 1.2rem; margin-bottom: 1rem;"></div>
   <div class="calendar" id="calendar"></div>
   <div class="legend">
     <span><span class="dot period"></span>Period</span>
@@ -80,15 +81,24 @@
 
   <script>
     const months = [
-      "Magnetic", "Lunar", "Electric", "Self-Existing", "Overtone", "Rhythmic", "Resonant", "Galactic", "Solar", "Planetary", "Spectral", "Crystal", "Cosmic"
+      "Magnetic", "Lunar", "Electric", "Self-Existing", "Overtone", "Rhythmic",
+      "Resonant", "Galactic", "Solar", "Planetary", "Spectral", "Crystal", "Cosmic"
     ];
 
     const startDate = new Date(new Date().getFullYear(), 6, 26); // July 26
     const today = new Date();
-    const daysInMonth = 28;
+    if (today < startDate) startDate.setFullYear(startDate.getFullYear() - 1);
+
+    const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+    const moonIndex = Math.floor(diffDays / 28);
+    const dayInMoon = (diffDays % 28) + 1;
 
     const calendar = document.getElementById("calendar");
     const stored = JSON.parse(localStorage.getItem("periodDays") || "{}");
+
+    // Show current lunar date
+    const todayDisplay = document.getElementById("todayDisplay");
+    todayDisplay.textContent = `🗓️ Today is ${months[moonIndex]} Moon, Day ${dayInMoon} in the 13 Moon Calendar`;
 
     months.forEach((name, mIdx) => {
       const month = document.createElement("div");
@@ -99,7 +109,7 @@
 
       const grid = document.createElement("div");
       grid.className = "grid";
-      for (let d = 1; d <= daysInMonth; d++) {
+      for (let d = 1; d <= 28; d++) {
         const day = document.createElement("div");
         day.className = "day";
         day.textContent = d;
