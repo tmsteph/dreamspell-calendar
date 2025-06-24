@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tmsteph 13 Moon Calendar</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0a0f1c;
+      color: #ffd700;
+      font-family: sans-serif;
+      padding: 1rem;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .calendar {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      max-width: 900px;
+      margin: auto;
+    }
+    .month {
+      border: 1px solid #ffd700;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .month h2 {
+      margin: 0 0 0.5rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .day {
+      background: #1e2440;
+      padding: 1em;
+      text-align: center;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .day.active {
+      background: #ff4d6d;
+    }
+    .day.today {
+      border: 2px solid #00ffff;
+    }
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .legend span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .dot {
+      width: 1em;
+      height: 1em;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.period { background: #ff4d6d; }
+    .dot.today { border: 2px solid #00ffff; background: transparent; }
+  </style>
+</head>
+<body>
+  <h1>✡ tmsteph's 13-Moon Calendar ✡</h1>
+  <div class="calendar" id="calendar"></div>
+  <div class="legend">
+    <span><span class="dot period"></span>Period</span>
+    <span><span class="dot today"></span>Today</span>
+  </div>
+
+  <script>
+    const months = [
+      "Magnetic", "Lunar", "Electric", "Self-Existing", "Overtone", "Rhythmic", "Resonant", "Galactic", "Solar", "Planetary", "Spectral", "Crystal", "Cosmic"
+    ];
+
+    const startDate = new Date(new Date().getFullYear(), 6, 26); // July 26
+    const today = new Date();
+    const daysInMonth = 28;
+
+    const calendar = document.getElementById("calendar");
+    const stored = JSON.parse(localStorage.getItem("periodDays") || "{}");
+
+    months.forEach((name, mIdx) => {
+      const month = document.createElement("div");
+      month.className = "month";
+      const header = document.createElement("h2");
+      header.textContent = `${name} Moon`;
+      month.appendChild(header);
+
+      const grid = document.createElement("div");
+      grid.className = "grid";
+      for (let d = 1; d <= daysInMonth; d++) {
+        const day = document.createElement("div");
+        day.className = "day";
+        day.textContent = d;
+
+        const dayNum = mIdx * 28 + d;
+        const thisDate = new Date(startDate);
+        thisDate.setDate(thisDate.getDate() + dayNum - 1);
+
+        const key = thisDate.toDateString();
+        if (stored[key]) day.classList.add("active");
+        if (thisDate.toDateString() === today.toDateString()) day.classList.add("today");
+
+        day.addEventListener("click", () => {
+          if (day.classList.contains("active")) {
+            delete stored[key];
+            day.classList.remove("active");
+          } else {
+            stored[key] = true;
+            day.classList.add("active");
+          }
+          localStorage.setItem("periodDays", JSON.stringify(stored));
+        });
+
+        grid.appendChild(day);
+      }
+
+      month.appendChild(grid);
+      calendar.appendChild(month);
+    });
+  </script>
+</body>
+</html>
